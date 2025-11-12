@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Translator Portofolio</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        h1 { text-align: center; color: #333; }
+        textarea { width: 100%; min-height: 150px; padding: 10px; box-sizing: border-box; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        select, button { padding: 10px; margin-right: 10px; border-radius: 4px; border: 1px solid #ddd; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #output { margin-top: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #eee; border-radius: 4px; white-space: pre-wrap; }
+        .info { font-size: 0.8em; color: #666; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🌐 AI Translator Sederhana</h1>
+
+    <label for="inputText">Teks Sumber:</label>
+    <textarea id="inputText" placeholder="Masukkan teks yang ingin Anda terjemahkan..."></textarea>
+
+    <label for="targetLang">Terjemahkan ke Bahasa:</label>
+    <select id="targetLang">
+        <option value="en">English (Inggris)</option>
+        <option value="id" selected>Indonesian (Indonesia)</option>
+        <option value="ja">Japanese (Jepang)</option>
+        <option value="es">Spanish (Spanyol)</option>
+    </select>
+    <button onclick="translateText()">Terjemahkan</button>
+
+    <hr>
+
+    <h2>Hasil Terjemahan:</h2>
+    <div id="output">Teks terjemahan akan muncul di sini.</div>
+    <div class="info" id="langInfo"></div>
+
+    <script>
+        // Fungsi untuk melakukan terjemahan
+        async function translateText() {
+            const inputText = document.getElementById('inputText').value;
+            const targetLang = document.getElementById('targetLang').value;
+            const outputDiv = document.getElementById('output');
+            const langInfoDiv = document.getElementById('langInfo');
+
+            // Cek jika input kosong
+            if (inputText.trim() === "") {
+                outputDiv.textContent = "Mohon masukkan teks untuk diterjemahkan.";
+                langInfoDiv.textContent = "";
+                return;
+            }
+
+            // Tampilkan status loading
+            outputDiv.textContent = "Sedang menerjemahkan... ⏳";
+            langInfoDiv.textContent = "";
+
+            try {
+                // Mengirim permintaan POST ke backend Node.js
+                const response = await fetch('/api/translate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: inputText,
+                        to: targetLang
+                    })
+                });
+
+                // Cek status HTTP
+                if (!response.ok) {
+                    throw new Error(`Gagal memuat data: Status ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Menampilkan hasil
+                outputDiv.textContent = data.translatedText;
+                langInfoDiv.textContent = `Bahasa sumber yang terdeteksi: ${data.detectedLanguage}`;
+                
+            } catch (error) {
+                console.error('Kesalahan terjemahan:', error);
+                outputDiv.textContent = "Maaf, terjadi kesalahan saat menghubungi server terjemahan.";
+                langInfoDiv.textContent = "";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.1",
+    "express": "^5.1.0"
+  },
+  "name": "simple-ai-translator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
